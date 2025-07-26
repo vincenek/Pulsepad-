@@ -837,8 +837,8 @@
                 <div class="journal-content">Realized I've been neglecting creative time. Will schedule art sessions twice this week.</div>
             </div>
             
-            <textarea class="journal-input" placeholder="Add your reflection..."></textarea>
-            <button class="btn btn-primary" style="margin-top: 15px; width: 100%;">
+            <textarea class="journal-input" placeholder="Add your reflection..." id="journalInput"></textarea>
+            <button class="btn btn-primary" style="margin-top: 15px; width: 100%;" id="saveJournal">
                 <i class="fas fa-plus"></i> Add Entry
             </button>
         </div>
@@ -1058,7 +1058,12 @@
             startBreathing: document.getElementById('startBreathing'),
             tabBtns: document.querySelectorAll('.tab-btn'),
             tabContents: document.querySelectorAll('.tab-content'),
-            installButton: document.getElementById('installButton')
+            installButton: document.getElementById('installButton'),
+            installPrompt: document.getElementById('installPrompt'),
+            closePrompt: document.getElementById('closePrompt'),
+            offlineIndicator: document.getElementById('offlineIndicator'),
+            journalInput: document.getElementById('journalInput'),
+            saveJournal: document.getElementById('saveJournal')
         };
 
         // Phase configurations
@@ -1066,19 +1071,19 @@
             focus: {
                 name: 'Focus',
                 description: 'Deep work without distractions',
-                duration: state.rhythmSync.optimalDurations.focus,
+                duration: 40 * 60,
                 color: '#ff8906'
             },
             pause: {
                 name: 'Pause',
                 description: 'Step back and recharge',
-                duration: state.rhythmSync.optimalDurations.pause,
+                duration: 10 * 60,
                 color: '#2cb67d'
             },
             reflect: {
                 name: 'Reflect',
                 description: 'Process and internalize',
-                duration: state.rhythmSync.optimalDurations.reflect,
+                duration: 5 * 60,
                 color: '#e53170'
             }
         };
@@ -1089,14 +1094,8 @@
             updateTimerDisplay();
             setupEventListeners();
             createPulseEffects();
-            
-            // Apply optimized durations
-            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
-                formatTime(phases.focus.duration);
-            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
-                formatTime(phases.pause.duration);
-            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
-                formatTime(phases.reflect.duration);
+            updatePhaseTimes();
+            loadJournalEntries();
             
             // Show initial energy prompt
             setTimeout(() => {
@@ -1191,9 +1190,11 @@
 
         // Set up event listeners
         function setupEventListeners() {
+            // Timer controls
             elements.startBtn.addEventListener('click', toggleTimer);
             elements.resetBtn.addEventListener('click', resetTimer);
             
+            // Sensory controls
             elements.soundBtn.addEventListener('click', () => {
                 state.soundEnabled = !state.soundEnabled;
                 elements.soundBtn.classList.toggle('active', state.soundEnabled);
@@ -1223,6 +1224,7 @@
                 if (state.ambientEnabled) playAmbientSound();
             });
             
+            // Phase indicators
             elements.phaseIndicators.forEach(indicator => {
                 indicator.addEventListener('click', () => {
                     const phase = indicator.dataset.phase;
@@ -1262,6 +1264,14 @@
             
             // Install button
             elements.installButton.addEventListener('click', installApp);
+            
+            // Close install prompt
+            elements.closePrompt.addEventListener('click', () => {
+                elements.installPrompt.classList.remove('show');
+            });
+            
+            // Journal save button
+            elements.saveJournal.addEventListener('click', saveJournalEntry);
         }
 
         // Toggle timer
@@ -1279,6 +1289,11 @@
             elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
             elements.timerCard.classList.add('active');
             
+            // Clear any existing interval
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
+            
             state.timerInterval = setInterval(() => {
                 state.timeRemaining--;
                 updateTimerDisplay();
@@ -1292,7 +1307,9 @@
         // Pause the timer
         function pauseTimer() {
             state.isRunning = false;
-            clearInterval(state.timerInterval);
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+            }
             elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
             elements.timerCard.classList.remove('active');
         }
@@ -1338,15 +1355,10 @@
             phases.reflect.duration = optimized.reflect;
             
             // Update phase times display
-            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
-                formatTime(phases.focus.duration);
-            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
-                formatTime(phases.pause.duration);
-            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
-                formatTime(phases.reflect.duration);
+            updatePhaseTimes();
             
-            // After reflect phase, prompt for journal entry
-            if (state.currentPhase === 'focus' && nextPhase === 'pause') {
+            // After reflect phase, show journal
+            if (state.currentPhase === 'focus' && nextPhase === 'focus') {
                 setTimeout(() => {
                     document.querySelector('.tab-btn[data-tab="journal"]').click();
                 }, 500);
@@ -1486,17 +1498,79 @@
             elements.phaseDescription.textContent = phases[state.currentPhase].description;
         }
 
+        // Update phase times display
+        function updatePhaseTimes() {
+            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
+                formatTime(phases.focus.duration);
+            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
+                formatTime(phases.pause.duration);
+            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
+                formatTime(phases.reflect.duration);
+        }
+
         // Format time for display
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
             return `${minutes.toString().padStart(2, '0')}:00`;
         }
         
+        // Save journal entry
+        function saveJournalEntry() {
+            const content = elements.journalInput.value.trim();
+            if (content) {
+                state.rhythmSync.addJournalEntry(content);
+                loadJournalEntries();
+                elements.journalInput.value = '';
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.textContent = "Journal entry saved!";
+                successMsg.style.color = "#2cb67d";
+                successMsg.style.marginTop = "10px";
+                successMsg.style.textAlign = "center";
+                elements.saveJournal.parentNode.insertBefore(successMsg, elements.saveJournal.nextSibling);
+                
+                // Remove after delay
+                setTimeout(() => {
+                    successMsg.remove();
+                }, 3000);
+            }
+        }
+        
+        // Load journal entries
+        function loadJournalEntries() {
+            const entriesContainer = document.querySelector('#journalTab .journal-container');
+            // Clear existing entries except the input and button
+            const existingEntries = entriesContainer.querySelectorAll('.journal-entry');
+            existingEntries.forEach(entry => entry.remove());
+            
+            // Get entries and add them
+            const entries = state.rhythmSync.getJournalEntries();
+            entries.forEach(entry => {
+                const entryEl = document.createElement('div');
+                entryEl.className = 'journal-entry';
+                
+                const date = new Date(entry.timestamp);
+                const dateStr = date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                entryEl.innerHTML = `
+                    <div class="journal-date">${dateStr}</div>
+                    <div class="journal-content">${entry.content}</div>
+                `;
+                
+                entriesContainer.insertBefore(entryEl, elements.journalInput);
+            });
+        }
+        
         // PWA Installation Prompt
         function setupPWA() {
             const installPrompt = document.getElementById('installPrompt');
-            const closePrompt = document.getElementById('closePrompt');
-            const installButton = document.getElementById('installButton');
             const offlineIndicator = document.getElementById('offlineIndicator');
             
             let deferredPrompt;
@@ -1511,11 +1585,6 @@
                 setTimeout(() => {
                     installPrompt.classList.add('show');
                 }, 5000);
-            });
-            
-            // Close prompt
-            closePrompt.addEventListener('click', () => {
-                installPrompt.classList.remove('show');
             });
             
             // Install button handler
@@ -1536,9 +1605,6 @@
                     });
                 }
             }
-            
-            // Add event listeners to install buttons
-            if (installButton) installButton.addEventListener('click', installApp);
             
             // Track app installed event
             window.addEventListener('appinstalled', () => {
