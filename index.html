@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PulsePad - Intelligent Rhythm Companion</title>
+    
+    <!-- PWA Manifest and Metadata -->
+    <meta name="theme-color" content="#0f0e17">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBmaWxsPSIjMGYxNzJhIj48cGF0aCBkPSJNMjU2IDQ4QzE0MS4xIDQ4IDQ4IDE0MS4xIDQ4IDI1NnM5My4xIDIwOCAyMDggMjA4IDIwOC05My4xIDIwOC0yMDhTMzcwLjkgNDggMjU2IDQ4em0wIDM4NGMtOTcuMiAwLTE3Ni03OC44LTE3Ni0xNzZTMTU4LjggODAgMjU2IDgwc3E3NiA3OC44IDE3NiAxNzYtNzguOCAxNzYtMTc2IDE3NnoiLz48L3N2Zz4=">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlB1bHNlUGFkIiwKICAic2hvcnRfbmFtZSI6ICJQdWxzZVBhZCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzBmMTcyYSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0F6TlRBZ05UQXdJajQ4YzNSNWJHVTlJbVpoYkhObExXbHRZV2RsTFdSbGMyTnlhWEIwYVc5dUlqNDhMM04yWno0PSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXpOVEFnTlRBd0lqNDhjM1I1YkdVOUltWmhiSE5sTFdsdFlXZGxMV1JsYzJOeWFYQjBhVzl1SWo0OEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -646,6 +654,81 @@
         .tab-content.active {
             display: block;
         }
+        
+        /* PWA Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            transform: translateY(150%);
+            transition: transform 0.5s ease;
+            max-width: 90%;
+        }
+        
+        .install-prompt.show {
+            transform: translateY(0);
+        }
+        
+        .install-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+        
+        .install-text {
+            flex: 1;
+            color: #333;
+        }
+        
+        .install-text strong {
+            color: #000;
+        }
+        
+        .install-close {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+        
+        /* Offline Indicator */
+        .offline-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--accent-2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            max-width: 90%;
+        }
+        
+        .offline-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="focus">
@@ -808,6 +891,31 @@
                 <div class="phase-time">05:00</div>
             </div>
         </div>
+        
+        <!-- Install Button -->
+        <button id="installButton" class="btn" style="margin-top: 20px;">
+            <i class="fas fa-download"></i> Install App
+        </button>
+    </div>
+    
+    <!-- Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <div class="install-icon">
+            <i class="fas fa-download"></i>
+        </div>
+        <div class="install-text">
+            <strong>Install PulsePad</strong>
+            <p>Add to home screen for quick access</p>
+        </div>
+        <button class="install-close" id="closePrompt">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fas fa-wifi-slash"></i>
+        <span>You are currently offline</span>
     </div>
 
     <script>
@@ -949,7 +1057,8 @@
             breathingText: document.getElementById('breathingText'),
             startBreathing: document.getElementById('startBreathing'),
             tabBtns: document.querySelectorAll('.tab-btn'),
-            tabContents: document.querySelectorAll('.tab-content')
+            tabContents: document.querySelectorAll('.tab-content'),
+            installButton: document.getElementById('installButton')
         };
 
         // Phase configurations
@@ -1150,6 +1259,9 @@
             
             // Breathing exercise
             elements.startBreathing.addEventListener('click', toggleBreathing);
+            
+            // Install button
+            elements.installButton.addEventListener('click', installApp);
         }
 
         // Toggle timer
@@ -1379,9 +1491,95 @@
             const minutes = Math.floor(seconds / 60);
             return `${minutes.toString().padStart(2, '0')}:00`;
         }
+        
+        // PWA Installation Prompt
+        function setupPWA() {
+            const installPrompt = document.getElementById('installPrompt');
+            const closePrompt = document.getElementById('closePrompt');
+            const installButton = document.getElementById('installButton');
+            const offlineIndicator = document.getElementById('offlineIndicator');
+            
+            let deferredPrompt;
+            
+            // Listen for beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Prevent the mini-infobar from appearing on mobile
+                e.preventDefault();
+                // Stash the event so it can be triggered later
+                deferredPrompt = e;
+                // Show the install prompt
+                setTimeout(() => {
+                    installPrompt.classList.add('show');
+                }, 5000);
+            });
+            
+            // Close prompt
+            closePrompt.addEventListener('click', () => {
+                installPrompt.classList.remove('show');
+            });
+            
+            // Install button handler
+            function installApp() {
+                if (deferredPrompt) {
+                    // Show the install prompt
+                    deferredPrompt.prompt();
+                    // Wait for the user to respond to the prompt
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                        } else {
+                            console.log('User dismissed the install prompt');
+                        }
+                        // We no longer need the prompt. Clear it up.
+                        deferredPrompt = null;
+                        installPrompt.classList.remove('show');
+                    });
+                }
+            }
+            
+            // Add event listeners to install buttons
+            if (installButton) installButton.addEventListener('click', installApp);
+            
+            // Track app installed event
+            window.addEventListener('appinstalled', () => {
+                console.log('PulsePad was installed successfully');
+                if (installPrompt) installPrompt.classList.remove('show');
+            });
+            
+            // Offline detection
+            window.addEventListener('offline', () => {
+                offlineIndicator.classList.add('show');
+            });
+            
+            window.addEventListener('online', () => {
+                offlineIndicator.classList.remove('show');
+            });
+            
+            // Initialize offline status
+            if (!navigator.onLine) {
+                offlineIndicator.classList.add('show');
+            }
+        }
+        
+        // Register Service Worker
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js').then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    }).catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+                });
+            }
+        }
 
         // Initialize the app
-        window.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('DOMContentLoaded', function() {
+            init();
+            setupPWA();
+            registerServiceWorker();
+        });
     </script>
 </body>
 </html>
