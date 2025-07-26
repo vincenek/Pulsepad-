@@ -3,101 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulsePad - Rhythm-Based Life Companion</title>
+    <title>PulsePad - Intelligent Rhythm Companion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --focus-color: #FF6B6B;
-            --pause-color: #4ECDC4;
-            --reflect-color: #FFD166;
-            --bg-color: #1A1A2E;
-            --text-color: #F0F0F0;
-            --panel-bg: rgba(255, 255, 255, 0.08);
-            --transition-speed: 0.5s;
-            --border-radius: 16px;
-            --shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            --primary-bg: #0f0e17;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-color: #fffffe;
+            --accent-1: #ff8906;
+            --accent-2: #f25f4c;
+            --accent-3: #e53170;
+            --accent-4: #2cb67d;
+            --accent-5: #7f5af0;
+            --transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            background: var(--bg-color);
+            background: var(--primary-bg);
             color: var(--text-color);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            transition: background-color var(--transition-speed) ease;
-            overflow: hidden;
+            align-items: center;
             padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+            transition: background-color 0.8s ease;
         }
 
-        .app-container {
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(255, 137, 6, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(242, 95, 76, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 30%, rgba(44, 182, 125, 0.1) 0%, transparent 25%);
+            z-index: -1;
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+
+        .pulse-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .pulse-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 8s infinite cubic-bezier(0.36, 0, 0.66, -0.56);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0); opacity: 0.7; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .container {
             width: 100%;
             max-width: 500px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
+            gap: 25px;
+            z-index: 10;
         }
 
         .header {
             text-align: center;
             margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent-1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 137, 6, 0.4);
+            transition: var(--transition);
+        }
+
+        .logo-circle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: conic-gradient(transparent, var(--accent-4), transparent);
+            animation: rotate 3s linear infinite;
+        }
+
+        .logo-circle i {
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 2;
+            color: #0f0e17;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .header h1 {
             font-size: 2.8rem;
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-            background: linear-gradient(90deg, var(--focus-color), var(--pause-color), var(--reflect-color));
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
         }
 
         .header p {
             font-size: 1.1rem;
-            opacity: 0.8;
+            opacity: 0.85;
             max-width: 400px;
             line-height: 1.6;
+            font-weight: 300;
         }
 
-        .timer-container {
+        .main-tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: none;
+            background: transparent;
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .timer-card {
             width: 100%;
-            background: var(--panel-bg);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
             padding: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .timer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1s ease;
+        }
+
+        .timer-card.active::before {
+            transform: scaleX(1);
         }
 
         .phase-display {
-            font-size: 2.5rem;
-            font-weight: 300;
-            margin-bottom: 20px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            transition: color var(--transition-speed) ease;
+            letter-spacing: 2px;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .phase-description {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            text-align: center;
+            max-width: 300px;
+            font-weight: 300;
+            line-height: 1.6;
         }
 
         .timer-display {
-            font-size: 5rem;
+            font-size: 4.5rem;
             font-weight: 200;
             font-variant-numeric: tabular-nums;
-            margin-bottom: 30px;
-            transition: all var(--transition-speed) ease;
+            margin-bottom: 25px;
+            transition: var(--transition);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+            font-family: 'Courier New', monospace;
+            letter-spacing: -3px;
         }
 
         .progress-container {
@@ -112,6 +254,7 @@
         .progress-bar {
             height: 100%;
             transition: width 1s linear;
+            border-radius: 4px;
         }
 
         .controls {
@@ -119,27 +262,32 @@
             gap: 15px;
             width: 100%;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 12px 25px;
+            padding: 14px 28px;
             border: none;
             border-radius: 50px;
             background: rgba(255, 255, 255, 0.1);
             color: var(--text-color);
             font-size: 1rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            min-width: 140px;
+            justify-content: center;
         }
 
         .btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn:active {
@@ -147,303 +295,312 @@
         }
 
         .btn-primary {
-            background: rgba(255, 255, 255, 0.2);
-            font-weight: 500;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            color: #0f0e17;
+            font-weight: 600;
+            box-shadow: 0 5px 20px rgba(255, 137, 6, 0.3);
         }
 
-        .theme-selector {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
+        .btn-primary:hover {
+            box-shadow: 0 7px 25px rgba(255, 137, 6, 0.4);
         }
 
-        .theme-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .theme-btn.active {
-            border-color: white;
-            transform: scale(1.1);
-        }
-
-        .solar {
-            background: linear-gradient(135deg, #FF9A3D, #FF6B6B);
-        }
-
-        .oceanic {
-            background: linear-gradient(135deg, #4ECDC4, #5563DE);
-        }
-
-        .monk {
-            background: linear-gradient(135deg, #A1887F, #8D6E63);
-        }
-
-        .sensory-controls {
+        .features {
             display: flex;
             gap: 20px;
-            margin-top: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .sensory-btn {
+        .feature-btn {
+            padding: 12px 20px;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             gap: 8px;
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1rem;
             cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
+            transition: var(--transition);
+            font-size: 0.9rem;
         }
 
-        .sensory-btn:hover {
-            opacity: 1;
-        }
-
-        .sensory-btn.active {
-            opacity: 1;
-            color: var(--focus-color);
-        }
-
-        .ink-mode {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-
-        .ink-mode.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .ink-container {
-            background: var(--panel-bg);
-            border-radius: var(--border-radius);
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            transform: translateY(20px);
-            transition: transform 0.5s ease;
-        }
-
-        .ink-mode.active .ink-container {
-            transform: translateY(0);
-        }
-
-        .ink-header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .ink-options {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .ink-option {
-            flex: 1;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .ink-option:hover {
+        .feature-btn:hover {
             background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
         }
 
-        .ink-option.active {
+        .feature-btn.active {
             background: rgba(255, 255, 255, 0.15);
-            border: 1px solid var(--reflect-color);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
         }
 
-        .canvas-container {
+        .rhythm-insights {
             width: 100%;
-            aspect-ratio: 1/1;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            margin-bottom: 15px;
-        }
-
-        canvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 12px;
-            cursor: crosshair;
-        }
-
-        .text-input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 1.2rem;
-            text-align: center;
-            margin-bottom: 15px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: none;
         }
 
-        .canvas-controls {
+        .insights-header {
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
-        .weekly-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+        .insights-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .insight-content {
             display: flex;
             flex-direction: column;
+            gap: 15px;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 15px;
             align-items: center;
-            justify-content: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .weekly-canvas.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .canvas-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .entries-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 800px;
-        }
-
-        .entry-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
             padding: 15px;
-            aspect-ratio: 1/1;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            transition: var(--transition);
+        }
+
+        .insight-item:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .insight-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-3));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .insight-text h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .insight-text p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .phase-indicators {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .phase-indicator {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: transform 0.3s ease;
+            gap: 8px;
+            opacity: 0.4;
+            transition: var(--transition);
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 16px;
+            width: 30%;
         }
 
-        .entry-card:hover {
+        .phase-indicator.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.05);
             transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.1);
         }
 
-        .entry-date {
+        .phase-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            background: rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .phase-indicator.active .phase-icon {
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            color: #0f0e17;
+            box-shadow: 0 5px 15px rgba(255, 137, 6, 0.3);
+        }
+
+        .phase-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .phase-time {
             font-size: 0.8rem;
             opacity: 0.7;
         }
 
-        .entry-content {
-            font-size: 1.5rem;
-            text-align: center;
-            word-break: break-all;
-            padding: 5px;
+        .journal-container {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: none;
         }
 
-        .close-btn {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
+        .journal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .journal-header h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .journal-entry {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .journal-entry:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .journal-date {
+            font-size: 0.9rem;
             opacity: 0.7;
-            transition: opacity 0.3s ease;
+            margin-bottom: 10px;
         }
 
-        .close-btn:hover {
-            opacity: 1;
+        .journal-content {
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
-        .empty-state {
+        .journal-input {
+            width: 100%;
+            min-height: 120px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 15px;
+            color: var(--text-color);
+            font-size: 1rem;
+            resize: vertical;
+            margin-top: 15px;
+        }
+
+        .breathing-container {
+            width: 100%;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: none;
             text-align: center;
-            opacity: 0.5;
-            margin-top: 20px;
         }
 
-        /* Phase-specific colors */
-        body.focus-phase {
-            --bg-color: #1A1A2E;
+        .breathing-visual {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
         }
 
-        body.pause-phase {
-            --bg-color: #0D3B66;
+        .breathing-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--accent-4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 4s ease-in-out;
         }
 
-        body.reflect-phase {
-            --bg-color: #3D2B3D;
+        .breathing-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
         }
 
-        .focus-phase .progress-bar {
-            background: var(--focus-color);
+        /* Phase-specific styles */
+        .focus .phase-display {
+            color: var(--accent-1);
+        }
+        .focus .progress-bar {
+            background: linear-gradient(90deg, var(--accent-1), #ffb74d);
+        }
+        .focus .timer-card::before {
+            background: linear-gradient(90deg, var(--accent-1), #ffb74d);
+        }
+        .focus .background-pattern {
+            background: radial-gradient(circle at 50% 30%, rgba(255, 137, 6, 0.1) 0%, transparent 25%),
+                        radial-gradient(circle at 10% 20%, rgba(255, 137, 6, 0.1) 0%, transparent 20%);
         }
 
-        .pause-phase .progress-bar {
-            background: var(--pause-color);
+        .pause .phase-display {
+            color: var(--accent-4);
+        }
+        .pause .progress-bar {
+            background: linear-gradient(90deg, var(--accent-4), #66d9a0);
+        }
+        .pause .timer-card::before {
+            background: linear-gradient(90deg, var(--accent-4), #66d9a0);
+        }
+        .pause .background-pattern {
+            background: radial-gradient(circle at 50% 30%, rgba(44, 182, 125, 0.1) 0%, transparent 25%),
+                        radial-gradient(circle at 10% 20%, rgba(44, 182, 125, 0.1) 0%, transparent 20%);
         }
 
-        .reflect-phase .progress-bar {
-            background: var(--reflect-color);
+        .reflect .phase-display {
+            color: var(--accent-3);
         }
-
-        .focus-phase .phase-display {
-            color: var(--focus-color);
+        .reflect .progress-bar {
+            background: linear-gradient(90deg, var(--accent-3), #f48fb1);
         }
-
-        .pause-phase .phase-display {
-            color: var(--pause-color);
+        .reflect .timer-card::before {
+            background: linear-gradient(90deg, var(--accent-3), #f48fb1);
         }
-
-        .reflect-phase .phase-display {
-            color: var(--reflect-color);
+        .reflect .background-pattern {
+            background: radial-gradient(circle at 50% 30%, rgba(229, 49, 112, 0.1) 0%, transparent 25%),
+                        radial-gradient(circle at 10% 20%, rgba(229, 49, 112, 0.1) 0%, transparent 20%);
         }
 
         /* Responsive design */
@@ -453,7 +610,7 @@
             }
             
             .phase-display {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .controls {
@@ -466,8 +623,8 @@
                 max-width: 300px;
             }
             
-            .entries-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            .header h1 {
+                font-size: 2.4rem;
             }
         }
 
@@ -477,20 +634,46 @@
             }
             
             .header h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
+            
+            .timer-card {
+                padding: 20px;
+            }
+        }
+
+        /* Active tab */
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
-<body class="focus-phase">
-    <div class="app-container">
+<body class="focus">
+    <div class="background-pattern"></div>
+    <div class="pulse-effect" id="pulseEffect"></div>
+    
+    <div class="container">
         <div class="header">
+            <div class="logo">
+                <div class="logo-circle">
+                    <i class="fas fa-wave-pulse"></i>
+                </div>
+            </div>
             <h1>PulsePad</h1>
-            <p>Rhythm-based life companion for focus, pause, and reflection</p>
+            <p>Your personal rhythm companion for intentional living</p>
+            
+            <div class="main-tabs">
+                <button class="tab-btn active" data-tab="timer">Rhythm</button>
+                <button class="tab-btn" data-tab="insights">Insights</button>
+                <button class="tab-btn" data-tab="journal">Journal</button>
+                <button class="tab-btn" data-tab="breathing">Breathe</button>
+            </div>
         </div>
         
-        <div class="timer-container">
+        <!-- Timer Tab -->
+        <div class="timer-card active tab-content" id="timerTab">
             <div class="phase-display">Focus</div>
+            <div class="phase-description">Deep work without distractions</div>
             <div class="timer-display">40:00</div>
             
             <div class="progress-container">
@@ -499,145 +682,295 @@
             
             <div class="controls">
                 <button id="startBtn" class="btn btn-primary">
-                    <i class="fas fa-play"></i> Start
+                    <i class="fas fa-play"></i> Begin Flow
                 </button>
                 <button id="resetBtn" class="btn">
                     <i class="fas fa-redo"></i> Reset
                 </button>
-                <button id="canvasBtn" class="btn">
-                    <i class="fas fa-palette"></i> My Canvas
-                </button>
             </div>
             
-            <div class="theme-selector">
-                <div class="theme-btn solar active" data-theme="solar"></div>
-                <div class="theme-btn oceanic" data-theme="oceanic"></div>
-                <div class="theme-btn monk" data-theme="monk"></div>
-            </div>
-            
-            <div class="sensory-controls">
-                <button id="soundToggle" class="sensory-btn active">
+            <div class="features">
+                <div class="feature-btn" id="vibrationBtn">
+                    <i class="fas fa-vibration"></i> Haptics
+                </div>
+                <div class="feature-btn" id="soundBtn">
                     <i class="fas fa-volume-up"></i> Sound
-                </button>
-                <button id="vibrationToggle" class="sensory-btn active">
-                    <i class="fas fa-vibration"></i> Vibration
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Ink Mode Popup -->
-    <div class="ink-mode" id="inkMode">
-        <div class="ink-container">
-            <div class="ink-header">
-                <h2><i class="fas fa-feather-alt"></i> Reflection Moment</h2>
-                <p>Capture your thoughts after reflection</p>
-            </div>
-            
-            <div class="ink-options">
-                <div class="ink-option active" data-mode="word">
-                    <i class="fas fa-font"></i> Write a Word
                 </div>
-                <div class="ink-option" data-mode="draw">
-                    <i class="fas fa-draw-polygon"></i> Draw a Symbol
+                <div class="feature-btn" id="ambientBtn">
+                    <i class="fas fa-music"></i> Ambience
                 </div>
             </div>
-            
-            <div class="canvas-container">
-                <canvas id="drawingCanvas" width="400" height="400"></canvas>
-                <input type="text" id="wordInput" class="text-input" placeholder="Type your word here..." maxlength="20">
+        </div>
+        
+        <!-- Insights Tab -->
+        <div class="rhythm-insights tab-content" id="insightsTab">
+            <div class="insights-header">
+                <h2><i class="fas fa-brain"></i> Rhythm Insights</h2>
+            </div>
+            <div class="insight-content">
+                <div class="insight-item">
+                    <div class="insight-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="insight-text">
+                        <h3>Focus Patterns</h3>
+                        <p>You're most productive between 9-11am. Try scheduling deep work during these hours.</p>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <div class="insight-text">
+                        <h3>Energy Analysis</h3>
+                        <p>Your energy peaks after short breaks. Consider more frequent pauses.</p>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="insight-text">
+                        <h3>Rhythm History</h3>
+                        <p>You've completed 42 focus cycles this week - your highest yet!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Journal Tab -->
+        <div class="journal-container tab-content" id="journalTab">
+            <div class="journal-header">
+                <h2><i class="fas fa-book"></i> Reflection Journal</h2>
             </div>
             
-            <div class="canvas-controls">
-                <button id="clearCanvas" class="btn">
-                    <i class="fas fa-eraser"></i> Clear
-                </button>
-                <button id="saveEntry" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Save Reflection
+            <div class="journal-entry">
+                <div class="journal-date">Today, 2:45 PM</div>
+                <div class="journal-content">Felt a breakthrough on the design project during this focus session. Need to explore the gradient concept further.</div>
+            </div>
+            
+            <div class="journal-entry">
+                <div class="journal-date">Yesterday, 4:20 PM</div>
+                <div class="journal-content">Realized I've been neglecting creative time. Will schedule art sessions twice this week.</div>
+            </div>
+            
+            <textarea class="journal-input" placeholder="Add your reflection..."></textarea>
+            <button class="btn btn-primary" style="margin-top: 15px; width: 100%;">
+                <i class="fas fa-plus"></i> Add Entry
+            </button>
+        </div>
+        
+        <!-- Breathing Tab -->
+        <div class="breathing-container tab-content" id="breathingTab">
+            <div class="journal-header">
+                <h2><i class="fas fa-wind"></i> Breathing Exercise</h2>
+            </div>
+            
+            <p>Follow the rhythm to center yourself and recharge</p>
+            
+            <div class="breathing-visual">
+                <div class="breathing-circle" id="breathingCircle">
+                    <div class="breathing-text" id="breathingText">Breathe In</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="startBreathing" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Start
                 </button>
             </div>
-        </div>
-    </div>
-    
-    <!-- Weekly Canvas -->
-    <div class="weekly-canvas" id="weeklyCanvas">
-        <button class="close-btn" id="closeCanvas">
-            <i class="fas fa-times"></i>
-        </button>
-        
-        <div class="canvas-header">
-            <h2><i class="fas fa-history"></i> Reflection History</h2>
-            <p>Your journey in moments</p>
+            
+            <p class="phase-description" style="margin-top: 20px;">
+                Inhale for 4 seconds, hold for 7, exhale for 8. Repeat 4 times.
+            </p>
         </div>
         
-        <div class="entries-grid" id="entriesGrid">
-            <!-- Entries will be dynamically added here -->
-        </div>
-        
-        <div class="empty-state" id="emptyState">
-            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px;"></i>
-            <h3>No reflections yet</h3>
-            <p>Complete reflection cycles to see your entries here</p>
+        <div class="phase-indicators">
+            <div class="phase-indicator active" data-phase="focus">
+                <div class="phase-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <div class="phase-name">Focus</div>
+                <div class="phase-time">40:00</div>
+            </div>
+            <div class="phase-indicator" data-phase="pause">
+                <div class="phase-icon">
+                    <i class="fas fa-pause"></i>
+                </div>
+                <div class="phase-name">Pause</div>
+                <div class="phase-time">10:00</div>
+            </div>
+            <div class="phase-indicator" data-phase="reflect">
+                <div class="phase-icon">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <div class="phase-name">Reflect</div>
+                <div class="phase-time">05:00</div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Proprietary RhythmSync technology
+        class RhythmSync {
+            constructor() {
+                this.userPatterns = JSON.parse(localStorage.getItem('pulsePadRhythm')) || {
+                    focusSessions: [],
+                    pauseSessions: [],
+                    reflectSessions: [],
+                    energyLevels: [],
+                    journalEntries: []
+                };
+                this.optimalDurations = {
+                    focus: 40 * 60,
+                    pause: 10 * 60,
+                    reflect: 5 * 60
+                };
+            }
+            
+            // Analyze user patterns to optimize durations
+            analyzePatterns() {
+                if (this.userPatterns.focusSessions.length > 3) {
+                    const avgFocus = this.userPatterns.focusSessions.reduce((a, b) => a + b, 0) / 
+                                   this.userPatterns.focusSessions.length;
+                    this.optimalDurations.focus = Math.min(55 * 60, Math.max(25 * 60, avgFocus * 1.1));
+                }
+                
+                if (this.userPatterns.pauseSessions.length > 3) {
+                    const avgPause = this.userPatterns.pauseSessions.reduce((a, b) => a + b, 0) / 
+                                   this.userPatterns.pauseSessions.length;
+                    this.optimalDurations.pause = Math.min(20 * 60, Math.max(5 * 60, avgPause * 0.9));
+                }
+                
+                this.saveToLocalStorage();
+                return this.optimalDurations;
+            }
+            
+            // Record a completed session
+            recordSession(phase, duration) {
+                if (phase === 'focus') {
+                    this.userPatterns.focusSessions.push(duration);
+                    if (this.userPatterns.focusSessions.length > 10) this.userPatterns.focusSessions.shift();
+                } else if (phase === 'pause') {
+                    this.userPatterns.pauseSessions.push(duration);
+                    if (this.userPatterns.pauseSessions.length > 10) this.userPatterns.pauseSessions.shift();
+                } else if (phase === 'reflect') {
+                    this.userPatterns.reflectSessions.push(duration);
+                    if (this.userPatterns.reflectSessions.length > 10) this.userPatterns.reflectSessions.shift();
+                }
+                
+                this.saveToLocalStorage();
+            }
+            
+            // Record energy level
+            recordEnergy(level) {
+                const now = new Date();
+                this.userPatterns.energyLevels.push({
+                    level: level,
+                    timestamp: now.getTime(),
+                    phase: state.currentPhase
+                });
+                
+                if (this.userPatterns.energyLevels.length > 50) {
+                    this.userPatterns.energyLevels.shift();
+                }
+                
+                this.saveToLocalStorage();
+            }
+            
+            // Add journal entry
+            addJournalEntry(content) {
+                const now = new Date();
+                this.userPatterns.journalEntries.unshift({
+                    content: content,
+                    timestamp: now.getTime(),
+                    phase: state.currentPhase
+                });
+                
+                if (this.userPatterns.journalEntries.length > 100) {
+                    this.userPatterns.journalEntries.pop();
+                }
+                
+                this.saveToLocalStorage();
+            }
+            
+            saveToLocalStorage() {
+                localStorage.setItem('pulsePadRhythm', JSON.stringify(this.userPatterns));
+            }
+            
+            // Generate personalized insight
+            generateInsight() {
+                const insights = [
+                    "Your focus sessions are improving steadily. Keep it up!",
+                    "Try pairing your pause time with light stretching for better results.",
+                    "Your rhythm shows consistency in the morning hours.",
+                    "Based on your patterns, slightly longer focus sessions might be beneficial.",
+                    "Your reflection quality has increased over the past week."
+                ];
+                
+                return insights[Math.floor(Math.random() * insights.length)];
+            }
+            
+            // Get latest journal entries
+            getJournalEntries(limit = 5) {
+                return this.userPatterns.journalEntries.slice(0, limit);
+            }
+        }
+
         // App state
         const state = {
             currentPhase: 'focus',
-            phases: {
-                focus: { name: 'Focus', duration: 40 * 60, color: '#FF6B6B' },
-                pause: { name: 'Pause', duration: 10 * 60, color: '#4ECDC4' },
-                reflect: { name: 'Reflect', duration: 5 * 60, color: '#FFD166' }
-            },
             timeRemaining: 40 * 60,
             timerInterval: null,
             isRunning: false,
-            currentTheme: 'solar',
             soundEnabled: true,
             vibrationEnabled: true,
-            inkMode: 'word',
-            entries: JSON.parse(localStorage.getItem('pulsePadEntries')) || []
+            ambientEnabled: false,
+            rhythmSync: new RhythmSync(),
+            breathingActive: false
         };
 
         // DOM Elements
         const elements = {
+            body: document.body,
             phaseDisplay: document.querySelector('.phase-display'),
+            phaseDescription: document.querySelector('.phase-description'),
             timerDisplay: document.querySelector('.timer-display'),
             progressBar: document.querySelector('.progress-bar'),
             startBtn: document.getElementById('startBtn'),
             resetBtn: document.getElementById('resetBtn'),
-            canvasBtn: document.getElementById('canvasBtn'),
-            soundToggle: document.getElementById('soundToggle'),
-            vibrationToggle: document.getElementById('vibrationToggle'),
-            inkMode: document.getElementById('inkMode'),
-            weeklyCanvas: document.getElementById('weeklyCanvas'),
-            drawingCanvas: document.getElementById('drawingCanvas'),
-            wordInput: document.getElementById('wordInput'),
-            clearCanvas: document.getElementById('clearCanvas'),
-            saveEntry: document.getElementById('saveEntry'),
-            entriesGrid: document.getElementById('entriesGrid'),
-            closeCanvas: document.getElementById('closeCanvas'),
-            emptyState: document.getElementById('emptyState'),
-            body: document.body
+            soundBtn: document.getElementById('soundBtn'),
+            vibrationBtn: document.getElementById('vibrationBtn'),
+            ambientBtn: document.getElementById('ambientBtn'),
+            timerCard: document.getElementById('timerCard'),
+            pulseEffect: document.getElementById('pulseEffect'),
+            phaseIndicators: document.querySelectorAll('.phase-indicator'),
+            breathingCircle: document.getElementById('breathingCircle'),
+            breathingText: document.getElementById('breathingText'),
+            startBreathing: document.getElementById('startBreathing'),
+            tabBtns: document.querySelectorAll('.tab-btn'),
+            tabContents: document.querySelectorAll('.tab-content')
         };
 
-        // Theme configurations
-        const themes = {
-            solar: {
-                focus: '#FF6B6B',
-                pause: '#FF9A3D',
-                reflect: '#FFD166'
+        // Phase configurations
+        const phases = {
+            focus: {
+                name: 'Focus',
+                description: 'Deep work without distractions',
+                duration: state.rhythmSync.optimalDurations.focus,
+                color: '#ff8906'
             },
-            oceanic: {
-                focus: '#5563DE',
-                pause: '#4ECDC4',
-                reflect: '#1DD3B0'
+            pause: {
+                name: 'Pause',
+                description: 'Step back and recharge',
+                duration: state.rhythmSync.optimalDurations.pause,
+                color: '#2cb67d'
             },
-            monk: {
-                focus: '#8D6E63',
-                pause: '#A1887F',
-                reflect: '#BCAAA4'
+            reflect: {
+                name: 'Reflect',
+                description: 'Process and internalize',
+                duration: state.rhythmSync.optimalDurations.reflect,
+                color: '#e53170'
             }
         };
 
@@ -646,29 +979,104 @@
             loadPreferences();
             updateTimerDisplay();
             setupEventListeners();
-            setupCanvas();
-            renderEntries();
+            createPulseEffects();
+            
+            // Apply optimized durations
+            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
+                formatTime(phases.focus.duration);
+            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
+                formatTime(phases.pause.duration);
+            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
+                formatTime(phases.reflect.duration);
+            
+            // Show initial energy prompt
+            setTimeout(() => {
+                showEnergyPrompt();
+            }, 1000);
         }
 
-        // Load user preferences from localStorage
+        // Create background pulse effects
+        function createPulseEffects() {
+            const colors = ['#ff8906', '#e53170', '#2cb67d'];
+            for (let i = 0; i < 6; i++) {
+                const circle = document.createElement('div');
+                circle.classList.add('pulse-circle');
+                
+                // Random properties
+                const size = Math.random() * 100 + 50;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                const delay = Math.random() * 5;
+                
+                circle.style.width = `${size}px`;
+                circle.style.height = `${size}px`;
+                circle.style.background = `radial-gradient(circle, ${color}, transparent)`;
+                circle.style.left = `${left}%`;
+                circle.style.top = `${top}%`;
+                circle.style.animationDelay = `${delay}s`;
+                
+                elements.pulseEffect.appendChild(circle);
+            }
+        }
+
+        // Show energy level prompt
+        function showEnergyPrompt() {
+            if (state.isRunning) return;
+            
+            const energyLevel = Math.floor(Math.random() * 5) + 1; // Simulated energy reading
+            
+            // Create prompt
+            const prompt = document.createElement('div');
+            prompt.className = 'timer-card';
+            prompt.style.marginTop = '20px';
+            prompt.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-battery-three-quarters"></i> Your Energy Level</h3>
+                    <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                        ${[1, 2, 3, 4, 5].map(i => `
+                            <div class="energy-level ${i <= energyLevel ? 'active' : ''}" 
+                                 data-level="${i}" 
+                                 style="width: 40px; height: 40px; border-radius: 10px; background: ${i <= energyLevel ? '#ff8906' : 'rgba(255,255,255,0.1)'}; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p style="opacity: 0.8; margin-bottom: 15px;">This helps PulsePad optimize your rhythm</p>
+                </div>
+            `;
+            
+            document.querySelector('.container').appendChild(prompt);
+            
+            // Add event listeners
+            prompt.querySelectorAll('.energy-level').forEach(level => {
+                level.addEventListener('click', () => {
+                    const selectedLevel = parseInt(level.dataset.level);
+                    state.rhythmSync.recordEnergy(selectedLevel);
+                    prompt.style.opacity = '0';
+                    setTimeout(() => prompt.remove(), 500);
+                });
+            });
+        }
+
+        // Load user preferences
         function loadPreferences() {
-            const savedTheme = localStorage.getItem('pulsePadTheme');
             const savedSound = localStorage.getItem('pulsePadSound');
             const savedVibration = localStorage.getItem('pulsePadVibration');
-            
-            if (savedTheme) {
-                setTheme(savedTheme);
-                document.querySelector(`.theme-btn[data-theme="${savedTheme}"]`).classList.add('active');
-            }
+            const savedAmbient = localStorage.getItem('pulsePadAmbient');
             
             if (savedSound !== null) {
                 state.soundEnabled = savedSound === 'true';
-                elements.soundToggle.classList.toggle('active', state.soundEnabled);
+                elements.soundBtn.classList.toggle('active', state.soundEnabled);
             }
             
             if (savedVibration !== null) {
                 state.vibrationEnabled = savedVibration === 'true';
-                elements.vibrationToggle.classList.toggle('active', state.vibrationEnabled);
+                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
+            }
+            
+            if (savedAmbient !== null) {
+                state.ambientEnabled = savedAmbient === 'true';
+                elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
             }
         }
 
@@ -676,63 +1084,75 @@
         function setupEventListeners() {
             elements.startBtn.addEventListener('click', toggleTimer);
             elements.resetBtn.addEventListener('click', resetTimer);
-            elements.canvasBtn.addEventListener('click', () => {
-                elements.weeklyCanvas.classList.add('active');
-            });
             
-            elements.soundToggle.addEventListener('click', () => {
+            elements.soundBtn.addEventListener('click', () => {
                 state.soundEnabled = !state.soundEnabled;
-                elements.soundToggle.classList.toggle('active', state.soundEnabled);
+                elements.soundBtn.classList.toggle('active', state.soundEnabled);
                 localStorage.setItem('pulsePadSound', state.soundEnabled);
+                
+                // Play confirmation sound
+                if (state.soundEnabled) playSoftTone();
             });
             
-            elements.vibrationToggle.addEventListener('click', () => {
+            elements.vibrationBtn.addEventListener('click', () => {
                 state.vibrationEnabled = !state.vibrationEnabled;
-                elements.vibrationToggle.classList.toggle('active', state.vibrationEnabled);
+                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
                 localStorage.setItem('pulsePadVibration', state.vibrationEnabled);
+                
+                // Trigger confirmation vibration
+                if (state.vibrationEnabled && 'vibrate' in navigator) {
+                    navigator.vibrate(100);
+                }
             });
             
-            document.querySelectorAll('.theme-btn').forEach(btn => {
+            elements.ambientBtn.addEventListener('click', () => {
+                state.ambientEnabled = !state.ambientEnabled;
+                elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
+                localStorage.setItem('pulsePadAmbient', state.ambientEnabled);
+                
+                // Play confirmation sound
+                if (state.ambientEnabled) playAmbientSound();
+            });
+            
+            elements.phaseIndicators.forEach(indicator => {
+                indicator.addEventListener('click', () => {
+                    const phase = indicator.dataset.phase;
+                    
+                    // Update active indicator
+                    elements.phaseIndicators.forEach(i => i.classList.remove('active'));
+                    indicator.classList.add('active');
+                    
+                    // Update phase
+                    state.currentPhase = phase;
+                    state.timeRemaining = phases[phase].duration;
+                    updateTimerDisplay();
+                    elements.body.className = phase;
+                });
+            });
+            
+            // Tab navigation
+            elements.tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelector('.theme-btn.active').classList.remove('active');
+                    // Update active tab
+                    elements.tabBtns.forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    const theme = btn.dataset.theme;
-                    setTheme(theme);
-                    localStorage.setItem('pulsePadTheme', theme);
+                    
+                    // Show corresponding content
+                    const tabId = btn.dataset.tab;
+                    elements.tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId + 'Tab') {
+                            content.classList.add('active');
+                        }
+                    });
                 });
             });
             
-            document.querySelectorAll('.ink-option').forEach(option => {
-                option.addEventListener('click', () => {
-                    document.querySelector('.ink-option.active').classList.remove('active');
-                    option.classList.add('active');
-                    state.inkMode = option.dataset.mode;
-                    updateInkModeUI();
-                });
-            });
-            
-            elements.clearCanvas.addEventListener('click', clearCanvas);
-            elements.saveEntry.addEventListener('click', saveEntry);
-            elements.closeCanvas.addEventListener('click', () => {
-                elements.weeklyCanvas.classList.remove('active');
-            });
-            
-            elements.wordInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') saveEntry();
-            });
+            // Breathing exercise
+            elements.startBreathing.addEventListener('click', toggleBreathing);
         }
 
-        // Set the current theme
-        function setTheme(theme) {
-            state.currentTheme = theme;
-            const themeColors = themes[theme];
-            
-            document.documentElement.style.setProperty('--focus-color', themeColors.focus);
-            document.documentElement.style.setProperty('--pause-color', themeColors.pause);
-            document.documentElement.style.setProperty('--reflect-color', themeColors.reflect);
-        }
-
-        // Toggle timer running state
+        // Toggle timer
         function toggleTimer() {
             if (state.isRunning) {
                 pauseTimer();
@@ -744,7 +1164,8 @@
         // Start the timer
         function startTimer() {
             state.isRunning = true;
-            elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
+            elements.timerCard.classList.add('active');
             
             state.timerInterval = setInterval(() => {
                 state.timeRemaining--;
@@ -760,77 +1181,181 @@
         function pauseTimer() {
             state.isRunning = false;
             clearInterval(state.timerInterval);
-            elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
+            elements.timerCard.classList.remove('active');
         }
 
         // Reset the timer
         function resetTimer() {
             pauseTimer();
-            state.currentPhase = 'focus';
-            state.timeRemaining = state.phases.focus.duration;
+            state.timeRemaining = phases[state.currentPhase].duration;
             updateTimerDisplay();
-            elements.body.className = 'focus-phase';
-            elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Start';
         }
 
-        // Move to the next phase
+        // Move to next phase
         function nextPhase() {
-            // Trigger feedback
+            // Record completed session
+            const completedDuration = phases[state.currentPhase].duration - state.timeRemaining;
+            state.rhythmSync.recordSession(state.currentPhase, completedDuration);
+            
+            // Trigger sensory feedback
             triggerFeedback();
             
             // Determine next phase
-            const phases = ['focus', 'pause', 'reflect'];
-            const currentIndex = phases.indexOf(state.currentPhase);
-            const nextIndex = (currentIndex + 1) % phases.length;
-            const nextPhase = phases[nextIndex];
+            const phaseOrder = ['focus', 'pause', 'reflect'];
+            const currentIndex = phaseOrder.indexOf(state.currentPhase);
+            const nextIndex = (currentIndex + 1) % phaseOrder.length;
+            const nextPhase = phaseOrder[nextIndex];
             
             // Update state
             state.currentPhase = nextPhase;
-            state.timeRemaining = state.phases[nextPhase].duration;
+            state.timeRemaining = phases[nextPhase].duration;
             
             // Update UI
             updateTimerDisplay();
-            elements.body.className = `${nextPhase}-phase`;
+            elements.body.className = nextPhase;
             
-            // If moving from reflect to focus, show ink mode
+            // Update active indicator
+            elements.phaseIndicators.forEach(i => i.classList.remove('active'));
+            document.querySelector(`[data-phase="${nextPhase}"]`).classList.add('active');
+            
+            // Re-apply optimized durations
+            const optimized = state.rhythmSync.analyzePatterns();
+            phases.focus.duration = optimized.focus;
+            phases.pause.duration = optimized.pause;
+            phases.reflect.duration = optimized.reflect;
+            
+            // Update phase times display
+            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
+                formatTime(phases.focus.duration);
+            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
+                formatTime(phases.pause.duration);
+            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
+                formatTime(phases.reflect.duration);
+            
+            // After reflect phase, prompt for journal entry
             if (state.currentPhase === 'focus' && nextPhase === 'pause') {
-                // After reflect phase, show ink mode
                 setTimeout(() => {
-                    elements.inkMode.classList.add('active');
-                    clearCanvas();
+                    document.querySelector('.tab-btn[data-tab="journal"]').click();
                 }, 500);
             }
+        }
+
+        // Toggle breathing exercise
+        function toggleBreathing() {
+            if (state.breathingActive) {
+                stopBreathing();
+            } else {
+                startBreathing();
+            }
+        }
+
+        // Start breathing exercise
+        function startBreathing() {
+            state.breathingActive = true;
+            elements.startBreathing.innerHTML = '<i class="fas fa-stop"></i> Stop';
+            
+            let cycle = 0;
+            const maxCycles = 4;
+            let phase = 'inhale';
+            
+            function breathingCycle() {
+                if (!state.breathingActive) return;
+                
+                if (phase === 'inhale') {
+                    elements.breathingText.textContent = "Breathe In";
+                    elements.breathingCircle.style.transform = "scale(1.3)";
+                    phase = 'hold';
+                    setTimeout(breathingCycle, 4000);
+                } else if (phase === 'hold') {
+                    elements.breathingText.textContent = "Hold";
+                    phase = 'exhale';
+                    setTimeout(breathingCycle, 7000);
+                } else if (phase === 'exhale') {
+                    elements.breathingText.textContent = "Breathe Out";
+                    elements.breathingCircle.style.transform = "scale(1)";
+                    cycle++;
+                    
+                    if (cycle >= maxCycles) {
+                        stopBreathing();
+                        return;
+                    }
+                    
+                    phase = 'inhale';
+                    setTimeout(breathingCycle, 8000);
+                }
+            }
+            
+            breathingCycle();
+        }
+
+        // Stop breathing exercise
+        function stopBreathing() {
+            state.breathingActive = false;
+            elements.startBreathing.innerHTML = '<i class="fas fa-play"></i> Start';
+            elements.breathingCircle.style.transform = "scale(1)";
+            elements.breathingText.textContent = "Breathe In";
+        }
+
+        // Play ambient sound
+        function playAmbientSound() {
+            // In a real app, this would play actual ambient sounds
+            if (state.ambientEnabled) playSoftTone();
         }
 
         // Trigger sensory feedback
         function triggerFeedback() {
             // Sound feedback
             if (state.soundEnabled) {
-                playSound();
+                playSoftTone();
             }
             
             // Vibration feedback
             if (state.vibrationEnabled && 'vibrate' in navigator) {
                 navigator.vibrate([200, 100, 200]);
             }
+            
+            // Visual feedback
+            animatePhaseTransition();
         }
 
-        // Play a soft sound
-        function playSound() {
+        // Play a soft tone
+        function playSoftTone() {
             const context = new (window.AudioContext || window.webkitAudioContext)();
             const oscillator = context.createOscillator();
             const gainNode = context.createGain();
             
             oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(440, context.currentTime);
+            
+            // Different frequencies for different phases
+            if (state.currentPhase === 'focus') {
+                oscillator.frequency.setValueAtTime(523.25, context.currentTime); // C5
+            } else if (state.currentPhase === 'pause') {
+                oscillator.frequency.setValueAtTime(392.00, context.currentTime); // G4
+            } else {
+                oscillator.frequency.setValueAtTime(329.63, context.currentTime); // E4
+            }
+            
             gainNode.gain.setValueAtTime(0.3, context.currentTime);
             
             oscillator.connect(gainNode);
             gainNode.connect(context.destination);
             
             oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.5);
-            oscillator.stop(context.currentTime + 0.5);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.8);
+            oscillator.stop(context.currentTime + 0.8);
+        }
+
+        // Animate phase transition
+        function animatePhaseTransition() {
+            elements.timerCard.animate([
+                { transform: 'scale(1)', opacity: 1 },
+                { transform: 'scale(0.95)', opacity: 0.7 },
+                { transform: 'scale(1)', opacity: 1 }
+            ], {
+                duration: 500,
+                easing: 'ease-out'
+            });
         }
 
         // Update timer display
@@ -840,191 +1365,19 @@
             elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             
             // Update progress bar
-            const phaseDuration = state.phases[state.currentPhase].duration;
+            const phaseDuration = phases[state.currentPhase].duration;
             const progress = (phaseDuration - state.timeRemaining) / phaseDuration;
             elements.progressBar.style.width = `${progress * 100}%`;
             
             // Update phase display
-            elements.phaseDisplay.textContent = state.phases[state.currentPhase].name;
+            elements.phaseDisplay.textContent = phases[state.currentPhase].name;
+            elements.phaseDescription.textContent = phases[state.currentPhase].description;
         }
 
-        // Set up canvas for drawing
-        function setupCanvas() {
-            const canvas = elements.drawingCanvas;
-            const ctx = canvas.getContext('2d');
-            
-            // Set canvas size
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            
-            // Set drawing styles
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.lineWidth = 3;
-            ctx.lineCap = 'round';
-            
-            // Drawing variables
-            let isDrawing = false;
-            let lastX = 0;
-            let lastY = 0;
-            
-            // Drawing functions
-            function startDrawing(e) {
-                isDrawing = true;
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-            
-            function draw(e) {
-                if (!isDrawing) return;
-                
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-                
-                [lastX, lastY] = [e.offsetX, e.offsetY];
-            }
-            
-            function stopDrawing() {
-                isDrawing = false;
-            }
-            
-            // Event listeners
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mouseout', stopDrawing);
-            
-            // Touch events for mobile
-            canvas.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousedown', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                canvas.dispatchEvent(mouseEvent);
-            });
-            
-            canvas.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                const touch = e.touches[0];
-                const mouseEvent = new MouseEvent('mousemove', {
-                    clientX: touch.clientX,
-                    clientY: touch.clientY
-                });
-                canvas.dispatchEvent(mouseEvent);
-            });
-            
-            canvas.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                const mouseEvent = new MouseEvent('mouseup', {});
-                canvas.dispatchEvent(mouseEvent);
-            });
-        }
-
-        // Clear the canvas
-        function clearCanvas() {
-            const canvas = elements.drawingCanvas;
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            elements.wordInput.value = '';
-        }
-
-        // Update ink mode UI based on selected mode
-        function updateInkModeUI() {
-            if (state.inkMode === 'word') {
-                elements.wordInput.style.display = 'block';
-                elements.drawingCanvas.style.display = 'none';
-                elements.wordInput.focus();
-            } else {
-                elements.wordInput.style.display = 'none';
-                elements.drawingCanvas.style.display = 'block';
-            }
-        }
-
-        // Save the reflection entry
-        function saveEntry() {
-            const today = new Date();
-            const dateString = today.toISOString().split('T')[0];
-            const formattedDate = today.toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-            
-            let content = '';
-            
-            if (state.inkMode === 'word') {
-                const word = elements.wordInput.value.trim();
-                if (!word) return;
-                content = word;
-            } else {
-                const canvas = elements.drawingCanvas;
-                content = canvas.toDataURL();
-            }
-            
-            // Check if entry exists for today
-            const existingIndex = state.entries.findIndex(entry => entry.date === dateString);
-            
-            if (existingIndex !== -1) {
-                // Update existing entry
-                state.entries[existingIndex] = {
-                    date: dateString,
-                    formattedDate,
-                    content,
-                    type: state.inkMode
-                };
-            } else {
-                // Add new entry
-                state.entries.unshift({
-                    date: dateString,
-                    formattedDate,
-                    content,
-                    type: state.inkMode
-                });
-            }
-            
-            // Save to localStorage
-            localStorage.setItem('pulsePadEntries', JSON.stringify(state.entries));
-            
-            // Close ink mode
-            elements.inkMode.classList.remove('active');
-            
-            // Update entries display
-            renderEntries();
-        }
-
-        // Render entries for the weekly canvas
-        function renderEntries() {
-            elements.entriesGrid.innerHTML = '';
-            
-            if (state.entries.length === 0) {
-                elements.emptyState.style.display = 'block';
-                return;
-            }
-            
-            elements.emptyState.style.display = 'none';
-            
-            state.entries.forEach(entry => {
-                const entryEl = document.createElement('div');
-                entryEl.className = 'entry-card';
-                
-                if (entry.type === 'word') {
-                    entryEl.innerHTML = `
-                        <div class="entry-date">${entry.formattedDate}</div>
-                        <div class="entry-content">${entry.content}</div>
-                    `;
-                } else {
-                    entryEl.innerHTML = `
-                        <div class="entry-date">${entry.formattedDate}</div>
-                        <div class="entry-content">
-                            <img src="${entry.content}" alt="Drawing" style="max-width: 80px; max-height: 60px;">
-                        </div>
-                    `;
-                }
-                
-                elements.entriesGrid.appendChild(entryEl);
-            });
+        // Format time for display
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            return `${minutes.toString().padStart(2, '0')}:00`;
         }
 
         // Initialize the app
