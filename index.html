@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PulsePad - Intelligent Rhythm Companion</title>
+    <meta name="description" content="Your personal rhythm companion for intentional living and productivity">
     
-    <!-- PWA Manifest and Metadata -->
+    <!-- PWA Configuration -->
     <meta name="theme-color" content="#0f0e17">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBmaWxsPSIjMGYxNzJhIj48cGF0aCBkPSJNMjU2IDQ4QzE0MS4xIDQ4IDQ4IDE0MS4xIDQ4IDI1NnM5My4xIDIwOCAyMDggMjA4IDIwOC05My4xIDIwOC0yMDhTMzcwLjkgNDggMjU2IDQ4em0wIDM4NGMtOTcuMiAwLTE3Ni03OC44LTE3Ni0xNzZTMTU4LjggODAgMjU2IDgwc3E3NiA3OC44IDE3NiAxNzYtNzguOCAxNzYtMTc2IDE3NnoiLz48L3N2Zz4=">
     <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlB1bHNlUGFkIiwKICAic2hvcnRfbmFtZSI6ICJQdWxzZVBhZCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAidGhlbWVfY29sb3IiOiAiIzBmMTcyYSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzBmMTcyYSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jaUlIWnBaWGRDYjNnOUlqQWdNQ0F6TlRBZ05UQXdJajQ4YzNSNWJHVTlJbVpoYkhObExXbHRZV2RsTFdSbGMyTnlhWEIwYVc5dUlqNDhMM04yWno0PSIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXpOVEFnTlRBd0lqNDhjM1I1YkdVOUltWmhiSE5sTFdsdFlXZGxMV1JsYzJOeWFYQjBhVzl1SWo0OEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <style>
         :root {
             --primary-bg: #0f0e17;
@@ -729,9 +732,42 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Loading Indicator */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 14, 23, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 137, 6, 0.3);
+            border-radius: 50%;
+            border-top: 5px solid var(--accent-1);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="focus">
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    
     <div class="background-pattern"></div>
     <div class="pulse-effect" id="pulseEffect"></div>
     
@@ -919,16 +955,12 @@
     </div>
 
     <script>
-        // Proprietary RhythmSync technology
+        // Production-Ready PulsePad Application
+        
+        // Enhanced RhythmSync technology
         class RhythmSync {
             constructor() {
-                this.userPatterns = JSON.parse(localStorage.getItem('pulsePadRhythm')) || {
-                    focusSessions: [],
-                    pauseSessions: [],
-                    reflectSessions: [],
-                    energyLevels: [],
-                    journalEntries: []
-                };
+                this.userPatterns = this.loadUserData();
                 this.optimalDurations = {
                     focus: 40 * 60,
                     pause: 10 * 60,
@@ -936,74 +968,120 @@
                 };
             }
             
+            // Load user data with error handling
+            loadUserData() {
+                try {
+                    const data = localStorage.getItem('pulsePadRhythm');
+                    return data ? JSON.parse(data) : {
+                        focusSessions: [],
+                        pauseSessions: [],
+                        reflectSessions: [],
+                        energyLevels: [],
+                        journalEntries: []
+                    };
+                } catch (e) {
+                    console.error('Failed to load user data:', e);
+                    return {
+                        focusSessions: [],
+                        pauseSessions: [],
+                        reflectSessions: [],
+                        energyLevels: [],
+                        journalEntries: []
+                    };
+                }
+            }
+            
             // Analyze user patterns to optimize durations
             analyzePatterns() {
-                if (this.userPatterns.focusSessions.length > 3) {
-                    const avgFocus = this.userPatterns.focusSessions.reduce((a, b) => a + b, 0) / 
-                                   this.userPatterns.focusSessions.length;
-                    this.optimalDurations.focus = Math.min(55 * 60, Math.max(25 * 60, avgFocus * 1.1));
+                try {
+                    if (this.userPatterns.focusSessions.length > 3) {
+                        const avgFocus = this.userPatterns.focusSessions.reduce((a, b) => a + b, 0) / 
+                                       this.userPatterns.focusSessions.length;
+                        this.optimalDurations.focus = Math.min(55 * 60, Math.max(25 * 60, avgFocus * 1.1));
+                    }
+                    
+                    if (this.userPatterns.pauseSessions.length > 3) {
+                        const avgPause = this.userPatterns.pauseSessions.reduce((a, b) => a + b, 0) / 
+                                       this.userPatterns.pauseSessions.length;
+                        this.optimalDurations.pause = Math.min(20 * 60, Math.max(5 * 60, avgPause * 0.9));
+                    }
+                    
+                    this.saveToLocalStorage();
+                    return this.optimalDurations;
+                } catch (e) {
+                    console.error('Pattern analysis failed:', e);
+                    return this.optimalDurations;
                 }
-                
-                if (this.userPatterns.pauseSessions.length > 3) {
-                    const avgPause = this.userPatterns.pauseSessions.reduce((a, b) => a + b, 0) / 
-                                   this.userPatterns.pauseSessions.length;
-                    this.optimalDurations.pause = Math.min(20 * 60, Math.max(5 * 60, avgPause * 0.9));
-                }
-                
-                this.saveToLocalStorage();
-                return this.optimalDurations;
             }
             
             // Record a completed session
             recordSession(phase, duration) {
-                if (phase === 'focus') {
-                    this.userPatterns.focusSessions.push(duration);
-                    if (this.userPatterns.focusSessions.length > 10) this.userPatterns.focusSessions.shift();
-                } else if (phase === 'pause') {
-                    this.userPatterns.pauseSessions.push(duration);
-                    if (this.userPatterns.pauseSessions.length > 10) this.userPatterns.pauseSessions.shift();
-                } else if (phase === 'reflect') {
-                    this.userPatterns.reflectSessions.push(duration);
-                    if (this.userPatterns.reflectSessions.length > 10) this.userPatterns.reflectSessions.shift();
+                try {
+                    if (phase === 'focus') {
+                        this.userPatterns.focusSessions.push(duration);
+                        if (this.userPatterns.focusSessions.length > 10) this.userPatterns.focusSessions.shift();
+                    } else if (phase === 'pause') {
+                        this.userPatterns.pauseSessions.push(duration);
+                        if (this.userPatterns.pauseSessions.length > 10) this.userPatterns.pauseSessions.shift();
+                    } else if (phase === 'reflect') {
+                        this.userPatterns.reflectSessions.push(duration);
+                        if (this.userPatterns.reflectSessions.length > 10) this.userPatterns.reflectSessions.shift();
+                    }
+                    
+                    this.saveToLocalStorage();
+                } catch (e) {
+                    console.error('Failed to record session:', e);
                 }
-                
-                this.saveToLocalStorage();
             }
             
             // Record energy level
             recordEnergy(level) {
-                const now = new Date();
-                this.userPatterns.energyLevels.push({
-                    level: level,
-                    timestamp: now.getTime(),
-                    phase: state.currentPhase
-                });
-                
-                if (this.userPatterns.energyLevels.length > 50) {
-                    this.userPatterns.energyLevels.shift();
+                try {
+                    const now = new Date();
+                    this.userPatterns.energyLevels.push({
+                        level: level,
+                        timestamp: now.getTime(),
+                        phase: state.currentPhase
+                    });
+                    
+                    if (this.userPatterns.energyLevels.length > 50) {
+                        this.userPatterns.energyLevels.shift();
+                    }
+                    
+                    this.saveToLocalStorage();
+                } catch (e) {
+                    console.error('Failed to record energy level:', e);
                 }
-                
-                this.saveToLocalStorage();
             }
             
             // Add journal entry
             addJournalEntry(content) {
-                const now = new Date();
-                this.userPatterns.journalEntries.unshift({
-                    content: content,
-                    timestamp: now.getTime(),
-                    phase: state.currentPhase
-                });
-                
-                if (this.userPatterns.journalEntries.length > 100) {
-                    this.userPatterns.journalEntries.pop();
+                try {
+                    const now = new Date();
+                    this.userPatterns.journalEntries.unshift({
+                        content: content,
+                        timestamp: now.getTime(),
+                        phase: state.currentPhase
+                    });
+                    
+                    if (this.userPatterns.journalEntries.length > 100) {
+                        this.userPatterns.journalEntries.pop();
+                    }
+                    
+                    this.saveToLocalStorage();
+                    return true;
+                } catch (e) {
+                    console.error('Failed to add journal entry:', e);
+                    return false;
                 }
-                
-                this.saveToLocalStorage();
             }
             
             saveToLocalStorage() {
-                localStorage.setItem('pulsePadRhythm', JSON.stringify(this.userPatterns));
+                try {
+                    localStorage.setItem('pulsePadRhythm', JSON.stringify(this.userPatterns));
+                } catch (e) {
+                    console.error('Failed to save data:', e);
+                }
             }
             
             // Generate personalized insight
@@ -1025,7 +1103,7 @@
             }
         }
 
-        // App state
+        // App state with initialization safeguards
         const state = {
             currentPhase: 'focus',
             timeRemaining: 40 * 60,
@@ -1034,11 +1112,11 @@
             soundEnabled: true,
             vibrationEnabled: true,
             ambientEnabled: false,
-            rhythmSync: new RhythmSync(),
+            rhythmSync: null,
             breathingActive: false
         };
 
-        // DOM Elements
+        // DOM Elements with null checks
         const elements = {
             body: document.body,
             phaseDisplay: document.querySelector('.phase-display'),
@@ -1063,7 +1141,8 @@
             closePrompt: document.getElementById('closePrompt'),
             offlineIndicator: document.getElementById('offlineIndicator'),
             journalInput: document.getElementById('journalInput'),
-            saveJournal: document.getElementById('saveJournal')
+            saveJournal: document.getElementById('saveJournal'),
+            loadingOverlay: document.getElementById('loadingOverlay')
         };
 
         // Phase configurations
@@ -1088,23 +1167,55 @@
             }
         };
 
-        // Initialize the app
+        // Initialize the app with error handling
         function init() {
-            loadPreferences();
-            updateTimerDisplay();
-            setupEventListeners();
-            createPulseEffects();
-            updatePhaseTimes();
-            loadJournalEntries();
-            
-            // Show initial energy prompt
-            setTimeout(() => {
-                showEnergyPrompt();
-            }, 1000);
+            try {
+                // Show loading indicator
+                if (elements.loadingOverlay) {
+                    elements.loadingOverlay.style.display = 'flex';
+                }
+                
+                // Initialize core systems
+                state.rhythmSync = new RhythmSync();
+                
+                // Load preferences
+                loadPreferences();
+                
+                // Set up UI
+                updateTimerDisplay();
+                setupEventListeners();
+                createPulseEffects();
+                updatePhaseTimes();
+                loadJournalEntries();
+                
+                // Hide loading indicator after setup
+                setTimeout(() => {
+                    if (elements.loadingOverlay) {
+                        elements.loadingOverlay.style.opacity = '0';
+                        setTimeout(() => {
+                            elements.loadingOverlay.style.display = 'none';
+                        }, 500);
+                    }
+                    
+                    // Show initial energy prompt
+                    showEnergyPrompt();
+                }, 1500);
+                
+                // Set up PWA features
+                setupPWA();
+            } catch (e) {
+                console.error('Initialization failed:', e);
+                if (elements.loadingOverlay) {
+                    elements.loadingOverlay.style.display = 'none';
+                }
+                alert('Failed to initialize PulsePad. Please refresh the page.');
+            }
         }
 
         // Create background pulse effects
         function createPulseEffects() {
+            if (!elements.pulseEffect) return;
+            
             const colors = ['#ff8906', '#e53170', '#2cb67d'];
             for (let i = 0; i < 6; i++) {
                 const circle = document.createElement('div');
@@ -1168,110 +1279,146 @@
 
         // Load user preferences
         function loadPreferences() {
-            const savedSound = localStorage.getItem('pulsePadSound');
-            const savedVibration = localStorage.getItem('pulsePadVibration');
-            const savedAmbient = localStorage.getItem('pulsePadAmbient');
-            
-            if (savedSound !== null) {
-                state.soundEnabled = savedSound === 'true';
-                elements.soundBtn.classList.toggle('active', state.soundEnabled);
-            }
-            
-            if (savedVibration !== null) {
-                state.vibrationEnabled = savedVibration === 'true';
-                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
-            }
-            
-            if (savedAmbient !== null) {
-                state.ambientEnabled = savedAmbient === 'true';
-                elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
+            try {
+                const savedSound = localStorage.getItem('pulsePadSound');
+                const savedVibration = localStorage.getItem('pulsePadVibration');
+                const savedAmbient = localStorage.getItem('pulsePadAmbient');
+                
+                if (savedSound !== null) {
+                    state.soundEnabled = savedSound === 'true';
+                    if (elements.soundBtn) {
+                        elements.soundBtn.classList.toggle('active', state.soundEnabled);
+                    }
+                }
+                
+                if (savedVibration !== null) {
+                    state.vibrationEnabled = savedVibration === 'true';
+                    if (elements.vibrationBtn) {
+                        elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
+                    }
+                }
+                
+                if (savedAmbient !== null) {
+                    state.ambientEnabled = savedAmbient === 'true';
+                    if (elements.ambientBtn) {
+                        elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load preferences:', e);
             }
         }
 
         // Set up event listeners
         function setupEventListeners() {
             // Timer controls
-            elements.startBtn.addEventListener('click', toggleTimer);
-            elements.resetBtn.addEventListener('click', resetTimer);
+            if (elements.startBtn) {
+                elements.startBtn.addEventListener('click', toggleTimer);
+            }
+            if (elements.resetBtn) {
+                elements.resetBtn.addEventListener('click', resetTimer);
+            }
             
             // Sensory controls
-            elements.soundBtn.addEventListener('click', () => {
-                state.soundEnabled = !state.soundEnabled;
-                elements.soundBtn.classList.toggle('active', state.soundEnabled);
-                localStorage.setItem('pulsePadSound', state.soundEnabled);
-                
-                // Play confirmation sound
-                if (state.soundEnabled) playSoftTone();
-            });
+            if (elements.soundBtn) {
+                elements.soundBtn.addEventListener('click', () => {
+                    state.soundEnabled = !state.soundEnabled;
+                    elements.soundBtn.classList.toggle('active', state.soundEnabled);
+                    localStorage.setItem('pulsePadSound', state.soundEnabled);
+                    
+                    // Play confirmation sound
+                    if (state.soundEnabled) playSoftTone();
+                });
+            }
             
-            elements.vibrationBtn.addEventListener('click', () => {
-                state.vibrationEnabled = !state.vibrationEnabled;
-                elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
-                localStorage.setItem('pulsePadVibration', state.vibrationEnabled);
-                
-                // Trigger confirmation vibration
-                if (state.vibrationEnabled && 'vibrate' in navigator) {
-                    navigator.vibrate(100);
-                }
-            });
+            if (elements.vibrationBtn) {
+                elements.vibrationBtn.addEventListener('click', () => {
+                    state.vibrationEnabled = !state.vibrationEnabled;
+                    elements.vibrationBtn.classList.toggle('active', state.vibrationEnabled);
+                    localStorage.setItem('pulsePadVibration', state.vibrationEnabled);
+                    
+                    // Trigger confirmation vibration
+                    if (state.vibrationEnabled && 'vibrate' in navigator) {
+                        navigator.vibrate(100);
+                    }
+                });
+            }
             
-            elements.ambientBtn.addEventListener('click', () => {
-                state.ambientEnabled = !state.ambientEnabled;
-                elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
-                localStorage.setItem('pulsePadAmbient', state.ambientEnabled);
-                
-                // Play confirmation sound
-                if (state.ambientEnabled) playAmbientSound();
-            });
+            if (elements.ambientBtn) {
+                elements.ambientBtn.addEventListener('click', () => {
+                    state.ambientEnabled = !state.ambientEnabled;
+                    elements.ambientBtn.classList.toggle('active', state.ambientEnabled);
+                    localStorage.setItem('pulsePadAmbient', state.ambientEnabled);
+                    
+                    // Play confirmation sound
+                    if (state.ambientEnabled) playAmbientSound();
+                });
+            }
             
             // Phase indicators
-            elements.phaseIndicators.forEach(indicator => {
-                indicator.addEventListener('click', () => {
-                    const phase = indicator.dataset.phase;
-                    
-                    // Update active indicator
-                    elements.phaseIndicators.forEach(i => i.classList.remove('active'));
-                    indicator.classList.add('active');
-                    
-                    // Update phase
-                    state.currentPhase = phase;
-                    state.timeRemaining = phases[phase].duration;
-                    updateTimerDisplay();
-                    elements.body.className = phase;
-                });
-            });
-            
-            // Tab navigation
-            elements.tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // Update active tab
-                    elements.tabBtns.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    
-                    // Show corresponding content
-                    const tabId = btn.dataset.tab;
-                    elements.tabContents.forEach(content => {
-                        content.classList.remove('active');
-                        if (content.id === tabId + 'Tab') {
-                            content.classList.add('active');
+            if (elements.phaseIndicators) {
+                elements.phaseIndicators.forEach(indicator => {
+                    indicator.addEventListener('click', () => {
+                        const phase = indicator.dataset.phase;
+                        
+                        // Update active indicator
+                        elements.phaseIndicators.forEach(i => i.classList.remove('active'));
+                        indicator.classList.add('active');
+                        
+                        // Update phase
+                        state.currentPhase = phase;
+                        state.timeRemaining = phases[phase].duration;
+                        updateTimerDisplay();
+                        if (elements.body) {
+                            elements.body.className = phase;
                         }
                     });
                 });
-            });
+            }
+            
+            // Tab navigation
+            if (elements.tabBtns && elements.tabContents) {
+                elements.tabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // Update active tab
+                        elements.tabBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        // Show corresponding content
+                        const tabId = btn.dataset.tab;
+                        elements.tabContents.forEach(content => {
+                            content.classList.remove('active');
+                            if (content.id === tabId + 'Tab') {
+                                content.classList.add('active');
+                            }
+                        });
+                    });
+                });
+            }
             
             // Breathing exercise
-            elements.startBreathing.addEventListener('click', toggleBreathing);
+            if (elements.startBreathing) {
+                elements.startBreathing.addEventListener('click', toggleBreathing);
+            }
             
             // Install button
-            elements.installButton.addEventListener('click', installApp);
+            if (elements.installButton) {
+                elements.installButton.addEventListener('click', installApp);
+            }
             
             // Close install prompt
-            elements.closePrompt.addEventListener('click', () => {
-                elements.installPrompt.classList.remove('show');
-            });
+            if (elements.closePrompt) {
+                elements.closePrompt.addEventListener('click', () => {
+                    if (elements.installPrompt) {
+                        elements.installPrompt.classList.remove('show');
+                    }
+                });
+            }
             
             // Journal save button
-            elements.saveJournal.addEventListener('click', saveJournalEntry);
+            if (elements.saveJournal) {
+                elements.saveJournal.addEventListener('click', saveJournalEntry);
+            }
         }
 
         // Toggle timer
@@ -1288,8 +1435,12 @@
             if (state.isRunning) return;
             
             state.isRunning = true;
-            elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
-            elements.timerCard.classList.add('active');
+            if (elements.startBtn) {
+                elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
+            }
+            if (elements.timerCard) {
+                elements.timerCard.classList.add('active');
+            }
             
             // Clear any existing interval
             if (state.timerInterval) {
@@ -1314,8 +1465,12 @@
                 clearInterval(state.timerInterval);
                 state.timerInterval = null;
             }
-            elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
-            elements.timerCard.classList.remove('active');
+            if (elements.startBtn) {
+                elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
+            }
+            if (elements.timerCard) {
+                elements.timerCard.classList.remove('active');
+            }
         }
 
         // Reset the timer
@@ -1346,11 +1501,18 @@
             
             // Update UI
             updateTimerDisplay();
-            elements.body.className = nextPhaseName;
+            if (elements.body) {
+                elements.body.className = nextPhaseName;
+            }
             
             // Update active indicator
-            elements.phaseIndicators.forEach(i => i.classList.remove('active'));
-            document.querySelector(`[data-phase="${nextPhaseName}"]`).classList.add('active');
+            if (elements.phaseIndicators) {
+                elements.phaseIndicators.forEach(i => i.classList.remove('active'));
+                const nextIndicator = document.querySelector(`[data-phase="${nextPhaseName}"]`);
+                if (nextIndicator) {
+                    nextIndicator.classList.add('active');
+                }
+            }
             
             // Re-apply optimized durations
             const optimized = state.rhythmSync.analyzePatterns();
@@ -1364,7 +1526,10 @@
             // After reflect phase, show journal
             if (state.currentPhase === 'focus') {
                 setTimeout(() => {
-                    document.querySelector('.tab-btn[data-tab="journal"]').click();
+                    const journalTab = document.querySelector('.tab-btn[data-tab="journal"]');
+                    if (journalTab) {
+                        journalTab.click();
+                    }
                 }, 500);
             }
             
@@ -1384,7 +1549,9 @@
         // Start breathing exercise
         function startBreathing() {
             state.breathingActive = true;
-            elements.startBreathing.innerHTML = '<i class="fas fa-stop"></i> Stop';
+            if (elements.startBreathing) {
+                elements.startBreathing.innerHTML = '<i class="fas fa-stop"></i> Stop';
+            }
             
             let cycle = 0;
             const maxCycles = 4;
@@ -1394,17 +1561,17 @@
                 if (!state.breathingActive) return;
                 
                 if (phase === 'inhale') {
-                    elements.breathingText.textContent = "Breathe In";
-                    elements.breathingCircle.style.transform = "scale(1.3)";
+                    if (elements.breathingText) elements.breathingText.textContent = "Breathe In";
+                    if (elements.breathingCircle) elements.breathingCircle.style.transform = "scale(1.3)";
                     phase = 'hold';
                     setTimeout(breathingCycle, 4000);
                 } else if (phase === 'hold') {
-                    elements.breathingText.textContent = "Hold";
+                    if (elements.breathingText) elements.breathingText.textContent = "Hold";
                     phase = 'exhale';
                     setTimeout(breathingCycle, 7000);
                 } else if (phase === 'exhale') {
-                    elements.breathingText.textContent = "Breathe Out";
-                    elements.breathingCircle.style.transform = "scale(1)";
+                    if (elements.breathingText) elements.breathingText.textContent = "Breathe Out";
+                    if (elements.breathingCircle) elements.breathingCircle.style.transform = "scale(1)";
                     cycle++;
                     
                     if (cycle >= maxCycles) {
@@ -1423,9 +1590,15 @@
         // Stop breathing exercise
         function stopBreathing() {
             state.breathingActive = false;
-            elements.startBreathing.innerHTML = '<i class="fas fa-play"></i> Start';
-            elements.breathingCircle.style.transform = "scale(1)";
-            elements.breathingText.textContent = "Breathe In";
+            if (elements.startBreathing) {
+                elements.startBreathing.innerHTML = '<i class="fas fa-play"></i> Start';
+            }
+            if (elements.breathingCircle) {
+                elements.breathingCircle.style.transform = "scale(1)";
+            }
+            if (elements.breathingText) {
+                elements.breathingText.textContent = "Breathe In";
+            }
         }
 
         // Play ambient sound
@@ -1452,67 +1625,82 @@
 
         // Play a soft tone
         function playSoftTone() {
-            const context = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = context.createOscillator();
-            const gainNode = context.createGain();
-            
-            oscillator.type = 'sine';
-            
-            // Different frequencies for different phases
-            if (state.currentPhase === 'focus') {
-                oscillator.frequency.setValueAtTime(523.25, context.currentTime); // C5
-            } else if (state.currentPhase === 'pause') {
-                oscillator.frequency.setValueAtTime(392.00, context.currentTime); // G4
-            } else {
-                oscillator.frequency.setValueAtTime(329.63, context.currentTime); // E4
+            try {
+                const context = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = context.createOscillator();
+                const gainNode = context.createGain();
+                
+                oscillator.type = 'sine';
+                
+                // Different frequencies for different phases
+                if (state.currentPhase === 'focus') {
+                    oscillator.frequency.setValueAtTime(523.25, context.currentTime); // C5
+                } else if (state.currentPhase === 'pause') {
+                    oscillator.frequency.setValueAtTime(392.00, context.currentTime); // G4
+                } else {
+                    oscillator.frequency.setValueAtTime(329.63, context.currentTime); // E4
+                }
+                
+                gainNode.gain.setValueAtTime(0.3, context.currentTime);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(context.destination);
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.8);
+                oscillator.stop(context.currentTime + 0.8);
+            } catch (e) {
+                console.error('Failed to play sound:', e);
             }
-            
-            gainNode.gain.setValueAtTime(0.3, context.currentTime);
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(context.destination);
-            
-            oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.8);
-            oscillator.stop(context.currentTime + 0.8);
         }
 
         // Animate phase transition
         function animatePhaseTransition() {
-            elements.timerCard.animate([
-                { transform: 'scale(1)', opacity: 1 },
-                { transform: 'scale(0.95)', opacity: 0.7 },
-                { transform: 'scale(1)', opacity: 1 }
-            ], {
-                duration: 500,
-                easing: 'ease-out'
-            });
+            if (elements.timerCard) {
+                elements.timerCard.animate([
+                    { transform: 'scale(1)', opacity: 1 },
+                    { transform: 'scale(0.95)', opacity: 0.7 },
+                    { transform: 'scale(1)', opacity: 1 }
+                ], {
+                    duration: 500,
+                    easing: 'ease-out'
+                });
+            }
         }
 
         // Update timer display
         function updateTimerDisplay() {
-            const minutes = Math.floor(state.timeRemaining / 60);
-            const seconds = state.timeRemaining % 60;
-            elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            if (elements.timerDisplay) {
+                const minutes = Math.floor(state.timeRemaining / 60);
+                const seconds = state.timeRemaining % 60;
+                elements.timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
             
             // Update progress bar
-            const phaseDuration = phases[state.currentPhase].duration;
-            const progress = (phaseDuration - state.timeRemaining) / phaseDuration;
-            elements.progressBar.style.width = `${progress * 100}%`;
+            if (elements.progressBar) {
+                const phaseDuration = phases[state.currentPhase].duration;
+                const progress = (phaseDuration - state.timeRemaining) / phaseDuration;
+                elements.progressBar.style.width = `${progress * 100}%`;
+            }
             
             // Update phase display
-            elements.phaseDisplay.textContent = phases[state.currentPhase].name;
-            elements.phaseDescription.textContent = phases[state.currentPhase].description;
+            if (elements.phaseDisplay) {
+                elements.phaseDisplay.textContent = phases[state.currentPhase].name;
+            }
+            if (elements.phaseDescription) {
+                elements.phaseDescription.textContent = phases[state.currentPhase].description;
+            }
         }
 
         // Update phase times display
         function updatePhaseTimes() {
-            document.querySelector('[data-phase="focus"] .phase-time').textContent = 
-                formatTime(phases.focus.duration);
-            document.querySelector('[data-phase="pause"] .phase-time').textContent = 
-                formatTime(phases.pause.duration);
-            document.querySelector('[data-phase="reflect"] .phase-time').textContent = 
-                formatTime(phases.reflect.duration);
+            const focusEl = document.querySelector('[data-phase="focus"] .phase-time');
+            const pauseEl = document.querySelector('[data-phase="pause"] .phase-time');
+            const reflectEl = document.querySelector('[data-phase="reflect"] .phase-time');
+            
+            if (focusEl) focusEl.textContent = formatTime(phases.focus.duration);
+            if (pauseEl) pauseEl.textContent = formatTime(phases.pause.duration);
+            if (reflectEl) reflectEl.textContent = formatTime(phases.reflect.duration);
         }
 
         // Format time for display
@@ -1523,30 +1711,39 @@
         
         // Save journal entry
         function saveJournalEntry() {
+            if (!elements.journalInput) return;
+            
             const content = elements.journalInput.value.trim();
             if (content) {
-                state.rhythmSync.addJournalEntry(content);
-                loadJournalEntries();
-                elements.journalInput.value = '';
+                const success = state.rhythmSync.addJournalEntry(content);
                 
-                // Show success message
-                const successMsg = document.createElement('div');
-                successMsg.textContent = "Journal entry saved!";
-                successMsg.style.color = "#2cb67d";
-                successMsg.style.marginTop = "10px";
-                successMsg.style.textAlign = "center";
-                elements.saveJournal.parentNode.insertBefore(successMsg, elements.saveJournal.nextSibling);
-                
-                // Remove after delay
-                setTimeout(() => {
-                    successMsg.remove();
-                }, 3000);
+                if (success) {
+                    loadJournalEntries();
+                    elements.journalInput.value = '';
+                    
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.textContent = "Journal entry saved!";
+                    successMsg.style.color = "#2cb67d";
+                    successMsg.style.marginTop = "10px";
+                    successMsg.style.textAlign = "center";
+                    if (elements.saveJournal) {
+                        elements.saveJournal.parentNode.insertBefore(successMsg, elements.saveJournal.nextSibling);
+                    }
+                    
+                    // Remove after delay
+                    setTimeout(() => {
+                        successMsg.remove();
+                    }, 3000);
+                }
             }
         }
         
         // Load journal entries
         function loadJournalEntries() {
             const entriesContainer = document.querySelector('#journalTab .journal-container');
+            if (!entriesContainer) return;
+            
             // Clear existing entries except the input and button
             const existingEntries = entriesContainer.querySelectorAll('.journal-entry');
             existingEntries.forEach(entry => entry.remove());
@@ -1571,7 +1768,9 @@
                     <div class="journal-content">${entry.content}</div>
                 `;
                 
-                entriesContainer.insertBefore(entryEl, elements.journalInput);
+                if (elements.journalInput) {
+                    entriesContainer.insertBefore(entryEl, elements.journalInput);
+                }
             });
         }
         
@@ -1590,7 +1789,9 @@
                 deferredPrompt = e;
                 // Show the install prompt
                 setTimeout(() => {
-                    installPrompt.classList.add('show');
+                    if (installPrompt) {
+                        installPrompt.classList.add('show');
+                    }
                 }, 5000);
             });
             
@@ -1608,7 +1809,9 @@
                         }
                         // We no longer need the prompt. Clear it up.
                         deferredPrompt = null;
-                        installPrompt.classList.remove('show');
+                        if (installPrompt) {
+                            installPrompt.classList.remove('show');
+                        }
                     });
                 }
             }
@@ -1621,15 +1824,19 @@
             
             // Offline detection
             window.addEventListener('offline', () => {
-                offlineIndicator.classList.add('show');
+                if (offlineIndicator) {
+                    offlineIndicator.classList.add('show');
+                }
             });
             
             window.addEventListener('online', () => {
-                offlineIndicator.classList.remove('show');
+                if (offlineIndicator) {
+                    offlineIndicator.classList.remove('show');
+                }
             });
             
             // Initialize offline status
-            if (!navigator.onLine) {
+            if (!navigator.onLine && offlineIndicator) {
                 offlineIndicator.classList.add('show');
             }
         }
@@ -1650,7 +1857,6 @@
         // Initialize the app
         window.addEventListener('DOMContentLoaded', function() {
             init();
-            setupPWA();
             registerServiceWorker();
         });
     </script>
