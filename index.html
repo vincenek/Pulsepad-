@@ -1050,7 +1050,7 @@
             soundBtn: document.getElementById('soundBtn'),
             vibrationBtn: document.getElementById('vibrationBtn'),
             ambientBtn: document.getElementById('ambientBtn'),
-            timerCard: document.getElementById('timerCard'),
+            timerCard: document.querySelector('.timer-card'),
             pulseEffect: document.getElementById('pulseEffect'),
             phaseIndicators: document.querySelectorAll('.phase-indicator'),
             breathingCircle: document.getElementById('breathingCircle'),
@@ -1285,6 +1285,8 @@
 
         // Start the timer
         function startTimer() {
+            if (state.isRunning) return;
+            
             state.isRunning = true;
             elements.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Flow';
             elements.timerCard.classList.add('active');
@@ -1299,6 +1301,7 @@
                 updateTimerDisplay();
                 
                 if (state.timeRemaining <= 0) {
+                    clearInterval(state.timerInterval);
                     nextPhase();
                 }
             }, 1000);
@@ -1309,6 +1312,7 @@
             state.isRunning = false;
             if (state.timerInterval) {
                 clearInterval(state.timerInterval);
+                state.timerInterval = null;
             }
             elements.startBtn.innerHTML = '<i class="fas fa-play"></i> Resume Flow';
             elements.timerCard.classList.remove('active');
@@ -1334,7 +1338,7 @@
             const phaseOrder = ['focus', 'pause', 'reflect'];
             const currentIndex = phaseOrder.indexOf(state.currentPhase);
             const nextIndex = (currentIndex + 1) % phaseOrder.length;
-            const nextPhaseName = phaseOrder[nextIndex]; // Fixed variable name conflict
+            const nextPhaseName = phaseOrder[nextIndex];
             
             // Update state
             state.currentPhase = nextPhaseName;
@@ -1358,11 +1362,14 @@
             updatePhaseTimes();
             
             // After reflect phase, show journal
-            if (state.currentPhase === 'focus' && nextPhaseName === 'focus') {
+            if (state.currentPhase === 'focus') {
                 setTimeout(() => {
                     document.querySelector('.tab-btn[data-tab="journal"]').click();
                 }, 500);
             }
+            
+            // Auto-start next phase
+            startTimer();
         }
 
         // Toggle breathing exercise
